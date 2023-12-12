@@ -3,6 +3,88 @@
 ## Question 1-5 (4 points each)
 The first five questions will be True/False, Multiple Choice, and/or Multiple Selection
 
+### Ternary Operator
+I don't think he explicitly taught this, but many people might not have been aware of the ternary operator.
+
+The ? operator works as a primitive if-else statement under a certain formatting. It is as follows:
+```
+condition ? expression_if_true : expression_if_false;
+```
+```cpp
+#include <iostream>
+
+int main() {
+    int num1 = 10;
+    int num2 = 20;
+
+    // Using the ternary operator to find the smaller number
+    int smallerNumber = (num1 < num2) ? num1 : num2;
+
+    std::cout << "The smaller number is: " << smallerNumber << std::endl;
+
+    return 0;
+}
+```
+
+### Macros
+Processed BEFORE the actual compilation of the code, enabling code reusability, conditional compilation, and platform-specific adaptations. They do not need to be in capital letters, but it is standard formatting to do so.
+
+#### #define 
+Macros can work either as object-like or function-like. All macros, either object or function use the #define operator.
+##### Object-Like Macros
+They work like any standard variable.
+```cpp
+#define PI 3.14
+#define GREETING "Hello, World!"
+
+double radius = 5.0;
+double circumference = 2 * PI * radius;  // Results in circumference being approximately 31.4159
+
+std::cout << GREETING; //prints "Hello, World!"
+```
+##### Function-Like Macros
+Preprocessor macros can also define functions. The formatting is as shown below.
+```cpp
+#define MACRO_NAME(parameter1, parameter2, ...) (replacement)
+```
+Used in an example:
+```cpp
+#define SUM(x, y) (x + y)
+
+// You can then use this function as you would normally
+
+int main(){
+    int x = 2;
+    int y = 24;
+    std::cout << SUM(x,y) << std::endl;
+    
+}
+```
+#### #undef #ifdef #else #endif 
+Checks if a macro is defined. Works like an if condition on a boolean case on if it is defined or not.
+```cpp
+#include <iostream>
+
+#define TEST 1
+
+int main() {
+  #ifdef TEST
+    std::cout << "TEST defined\n";
+  #else
+    std::cout << "TEST undefined\n";
+  #endif
+
+  #undef TEST
+
+  #ifdef TEST
+    std::cout << "TEST defined\n";
+  #else
+    std::cout << "TEST undefined\n";
+  #endif
+}
+```
+Below is a simple test of if, else if, 
+
 ## Question 6 (6 points)
 Assesses your memory management skills by requiring a C++ code realization based on a provided description.
 
@@ -13,15 +95,13 @@ Assesses your memory management skills by requiring a C++ code realization based
 ```cpp
 #include <iostream>
 
-int* pointVar;
+int* pointVar; // declare int pointer (int *pointVar; works too)
 pointvar = new int; // for initializing to a new variable.
 
 int *differentVar = new int; // alternate way of declaring new.
 
-int x = 420;
+int x = 420; //declare and initialize int
 int *pointx = &x; // use & to declare pointer to a preexisting variable
-
-
 ```
 
 ```cpp
@@ -90,10 +170,26 @@ int main() {
 }//0 Instances
 ```
 
+#### Weak Pointer
+Type of smart pointer in C++ that allows access to the be shared from a shared_ptr, but doesn't count towards the number of instances that need to go out of scope for the pointer to deallocate. In other words, it is a shared pointer that does not have any ownership of the memory.
+
+```cpp
+#include <memory>
+
+int main() {
+    std::shared_ptr<int> sharedInt = std::make_shared<int>(42); //1 Instance
+    // sharedInt can be copied, and all copies share ownership
+    
+    {
+        std::weak_ptr<int> weakInt = sharedInt; //1 Instances (weak pointer doesn't add to instances)
+    } //1 Instance
+    return 0;  // sharedInt is automatically deallocated when all of them go out of scope
+}//0 Instances
+```
 
 
 #### Memory Deallocation 
-#### Memory Pool (Probably Not)
+#### Memory Pool 
 
 
 
@@ -101,7 +197,50 @@ int main() {
 evaluates your ability to provide access to reading and writing files with some specifications. 
 
 ### Reading From Files 
+Write a program in C++ that reads data from a file called "input.txt" and writes it to another file called "output.txt". Use stream input/output to read and write the data, and handle any errors that may occur during the process.
 
+
+```cpp
+#include <fstream>
+#include<iostream>
+#include <string>
+int main() {
+std :: ofstream inputFile("input.txt");
+if (!inputFile) {
+std :: cerr << "Error: Unable to create/open input file 'input.txt' " << std :: endl;
+return 1;
+}
+// Write data to the input.txt file
+inputFile << "This is the first line of input." << std :: endl;
+inputFile << "This is the second line of input." << std::endl;
+// Close the input.txt file
+inputFile.close();
+// Open the input.txt file for reading
+std :: ifstream outputFile("input.txt");
+if (!outputFile) {
+std :: cerr << "Error: Unable to open input file 'input.txt' for reading" << std :: endl;
+return 1;
+}
+// Create the output.txt file and open it for writing
+std :: ofstream output("output.txt");
+if (!output) {
+std :: cerr << "Error: Unable to create/open output file 'output.txt'" << std :: endl;
+outputFile.close(); // Close the input file before exiting
+return 1;
+}
+// Read data from input.txt and write it to output.txt
+std :: string line;
+while (std :: getline(outputFile, line)) {
+output << line << std :: endl;
+}
+// Close both files
+outputFile.close();
+output.close();
+std :: cout << "Data copied successfully from 'input. txt' to 'output.txt'" << std::endl;
+return 0;
+}![](http://csi2372.rambolps.ca:3000/uploads/2d64a8ea-d9f8-430b-bf91-26f2851193cb.png)
+
+```
 ### Writing From Files 
 
 ### File Security 
@@ -116,7 +255,7 @@ evaluates your ability to provide access to reading and writing files with some 
 - S_IXGRP (group execute)
 - S_IROTH (others read)
 - S_IWOTH (others write)
-- and S_IXOTH (others execute)
+- S_IXOTH (others execute)
 
 
 ### Streams 
@@ -127,24 +266,352 @@ evaluates your ability to provide access to reading and writing files with some 
 ## Question 8.1-8.3 + 8.4 bonus (6 points each + 6 point bonus)
 Code related to links and nodes, divided into three segments, each worth 6 points. There's a bonus for those who complete the entire code, in addition to the required three segments. The main method, crucial for the bonus, must yield specified outputs (but it is optional). Completing only the three segments earns 18 points, and the bonus carries a weight of 6 points.
 
-A linked list is a collection of nodes. Each node has two parts: data and a reference to the next
-node. Unlike arrays, linked lists don't require contiguous memory allocation. They can easily grow
-or shrink during runtime. Common types of linked lists include:
+A linked list is a collection of nodes. Each node has two parts: data and a reference to the next node. Unlike arrays, linked lists don't require contiguous memory allocation. They can easily grow or shrink during runtime. Common types of linked lists include:
 ➢ Singly linked lists (each node points to the next),
 ➢ Doubly linked lists (each node points to both the next and previous), and
 ➢ Circular linked lists (the last node points back to the first).
+➢ Trees, Possibly
 
+
+Potential Topics
+
+- Add
+- Remove 
+- Check for Element
+
+### Singly Linked Lists
+
+#### Insertion
+
+﻿
+```cpp
+#include <iostream>
+using namespace std; 
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+// this is a weird function. usually you should insert at the end.
+Node* insertAtBeginning (Node* head, int data) {
+    Node* newNode = new Node;
+    newNode->data = data;
+    newNode->next = head; // Set the new node's next to the current head return newNode;
+    return newNode; // Update the head to the new node
+}
+
+void traverse (Node* head) {
+    Node* current = head;
+    while (current != nullptr) {
+        cout<< current->data << " ";
+        current = current->next;
+    }
+    cout << endl;
+}
+
+Node *insertAtEnd (Node* head, int data) {
+    Node* newNode = new Node; // create new node
+    newNode->data = data; // set new node data
+    if (head == nullptr) { // if list is empty, new node becomes the head
+        head = newNode;
+    }
+    Node* current = head;
+    while (current->next != nullptr) { //traverse the list until we reach the last node
+        current = current->next;
+    }
+    current->next = newNode; // set the next element of the last node to be our new node
+    return newNode; // update the list
+}
+
+```
+Insertion at beginning Steps:
+
+1. Create a New Node 
+2. Set the new Node's next to the head of the list  
+3. Return the New Node as the new head
+
+Insertion at end Steps:
+
+1. Create new node
+2. If list is empty, set new node to head
+3. Else, traverse the list till you reach the last node, and set its next node to be the new node created in Step 1
+
+Traversal Steps:
+
+1. Set current node to head
+2. While the current node is not null, print its data, and set current to current->next
+
+#### Deletion 
+
+```cpp 
+
+/* Function to delete the entire linked list */ 
+void deleteList (Node** head_ref)
+{
+    /* deref head ref to get the real head */ 
+    Node* current "head_ref;
+    Node next= NULL;
+    while (current != NULL)
+    {
+        next current->next;
+        free(current);
+        current next;
+    }
+    /* deref head ref to affect the real head back
+    in the caller. */
+    "head_ref= NULL;
+    
+}
+
+void push (Node** head_ref, int new_data) {
+    /* allocate node */
+    Node* new_node - new Node();
+    /* put in the data */
+    new_node->data= new_data;
+    /* link the old list of the new node */ 
+    new_node->next (*head_ref);
+    /*move the head to point to the new node */ 
+    (*head_ref) new_node;
+}
+
+
+/ Driver code*/
+int main()
+{
+    /* Start with the empty list */ 
+    Node head= NULL;
+    /* Use push() to construct below list 1-12-1-4->1 */
+    push(&head, 1);
+    push(&head, 4);
+    push(&head, 1);
+    push(&head, 12); push(&head, 1);
+    cout << "Deleting linked list"; deleteList(&head);
+    cout << "\nLinked list deleted";
+}
+```
+
+#### Searching 
+
+Same for Doubly and Circular 
+
+<!-- ![](http://csi2372.rambolps.ca:3000/uploads/fe128066-4f88-4a9e-9f12-7338023e5836.png) -->
+
+```cpp
+// Search a node
+bool searchNode(struct Node** head_ref, int key){
+    struct Node* current = *head_ref;
+        
+    while (current != NULL) {
+        
+    if (current->data == key){
+        return true;
+    }
+        
+    current = current->next;
+    
+    }
+    return false;
+}
+```
+
+### Doubly Linked Lists 
+
+#### Insertation at Head
+
+``` cpp
+﻿
+
+void push(Node** head_ref, int new_data) {
+}
+// 1. allocate node
+Node* new_node = new Node();
+// 2. put in the data 
+new_node->data = new_data;
+// 3. Make next of new node as head and previous as NULL 
+new_node->next = (*head_ref);
+new_node->prev = NULL;
+// 4. change prev of head node to new node 
+if ((*head_ref) != NULL)
+    (*head_ref)->prev = new_node;
+// 5. move the head to point to the new node 
+(*head_ref) = new_node;
+
+```
+
+#### Insertation at the End 
+
+```cpp
+void append(Node** head_ref, int new_data) { 
+    // 1. allocate node
+    Node* new_node = new Node();
+    Node* last *head_ref; /* used in step 5*/
+    // 2. put in the data
+    new_node->data = new_data;
+    // 3. This new node is going to be the last node, so make next     of it as NULL
+    new_node->next = NULL;
+    // 4. If the Linked List is empty, then make the new
+    // node as head
+    if (*head_ref== NULL) {
+        new_node->prev = NULL;
+        *head_ref = new_node;
+        return;
+    }
+    // 5. Else traverse till the last node
+    while (last->next != NULL)
+        last = last->next;
+        // 6. Change the next of last node 
+        last->next = new_node;
+        // 7. Make last node as previous of new node
+    new_node->prev = last 
+    return;
+}
+
+```
+
+#### Deletion 
+﻿
+```cpp
+/* Function to delete a node in a Doubly Linked List head_ref --> pointer to head node pointer. del --> pointer to node to be deleted. */ 
+
+void deleteNode (Node** head_ref, Node* del) 
+    /* base case */
+    if (*head_ref == NULL || del == NULL)
+        return;
+
+    /* If node to be deleted is head node */ 
+    if (*head _ref == del)
+        *head_ref = del->next;
+    /* Change next only if node to be deleted is NOT the last node */ 
+    if (del->next != NULL)
+        del->next->prev = del->prev;
+    /* Change prev only if node to be deleted is NOT the first node */ 
+    if (del->prev != NULL)
+        del->prev->next = del->next;
+    /* Finally, free the memory occupied by del*/ free(del);
+
+```
+
+ 
+### Circular Linked Lists
+
+#### Insertation at the Beginning 
+
+
+```cpp
+
+struct Node* addBegin(struct Node* last, int data) { 
+    if (last == NULL)
+        return addToEmpty(last, data);
+    // Creating a node dynamically.
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    // Assigning the data.
+    temp->data = data;
+    // Adjusting the links. temp->next = last->next;
+    last->next = temp; 
+    return last;
+}
+
+```
+
+#### Insertation at the End 
+
+``` cpp
+struct Node* addEnd (struct Node* last, int data) { 
+    if (last == NULL)
+        return addToEmpty(last, data);
+    // Creating a node dynamically. 
+    struct Node* temp = (struct node *)malloc(sizeof(struct Node));     // Assigning the data.
+    temp->data = data;
+    // Adjusting the links. 
+    temp->next = last->next;
+    last->next = temp;
+    last = temp;
+    return last;
+}
+
+```
+
+#### Deletion 
 
 ## Question 9 (18 points)
 three segments focusing on adding and removing observers for different events. Your ability to complete tasks with specific constructors and classes will be evaluated. 
 
 ### Observer Pattern 
 
-![](http://csi2372.rambolps.ca:3000/uploads/98acf8c1-6ba3-4305-bc4e-a63c60e02feb.png)
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+class Observer{
+public:
+    virtual void update(const std::string& message) = 0;
+};
+
+class Subject {
+private:
+    std::vector<Observer*> observers;
+public:
+    void addObserver(Observer* observer){
+        observers.push_back(observer);
+    }
+    void removeObserver(Observer* observer){
+        observers.erase(std::remove(observers.begin(),observers.end(),observer),observers.end());
+    }
+
+    void notifyObservers(const std::string& message){
+        for(Observer* observer : observers){
+            observer->update(message);
+        }
+    }
+};
+
+class ConcreteObserver : public Observer{
+private:
+    std::string name;
+public:
+    ConcreteObserver(const std::string& name) : name(name){}
+
+    void update(const std::string& message) override{
+        std::cout << name << " received message: " << message << std::endl;
+    }
+};
+
+int main(){
+    Subject subject;
+
+    //Create observers
+    ConcreteObserver observer1("Observer 1");
+    ConcreteObserver observer2("Observer 2");
+
+    //Add observers to the subject
+    subject.addObserver(&observer1);
+    subject.addObserver(&observer2);
+
+    //Notify observers of an event
+    subject.notifyObservers("Event occurred!");
+
+    //Remove an observer
+    subject.removeObserver(&observer1);
+
+    //Notify remaining observers
+    subject.notifyObservers("Another event occurred!");
+
+    return 0;
+}
+```
+
+```
+OUTPUT:
+
+Observer 1 received message: Event occurred!
+Observer 2 received message: Event occurred!
+Observer 2 received message: Another event occurred!
+```
 
 ## Question 10.1-10.2 (6 points + 14 points)
-
-
+  
 covers the logic of a JK flip-flop in two segments: the first involves implementation and logic/schematic (6 points), while the second assesses your ability to write a C++ code for an 8-bit binary counter using a JK flip-flop. Be prepared for either synchronous (iteration of 0 to 255 binary) or asynchronous (event-driven) scenarios. This segment is worth 14 points.
 
 ### SR Flip Flop 
@@ -182,7 +649,7 @@ An 8-bit counter implemented using JK flip-flops is a circuit that counts in bin
 
 ![](http://csi2372.rambolps.ca:3000/uploads/4b01bc3a-ef44-44d7-bea1-a1644a5990b0.png)
 
-### JK Flip Flop 
+### JK Flip Flop 8 Bit Counter 
 ```cpp 
 
 #include <iostream>
@@ -229,10 +696,6 @@ public:
     EightBitCounter() {}
 
     void clockCycle() {
-        // for (int i = 0; i < 8; ++i) {
-        //     bool currentBit = flipFlops[i].getOutput();
-        //     flipFlops[i].setInputs(!currentBit, currentBit, true);  // J=~currentBit, K=currentBit, CLK=1
-        // }
         
         bool done = true;
         
@@ -271,13 +734,13 @@ int main() {
 
     return 0;
 }
-
-
 ```
 
 
 ## Question 11 (6 points)
 draw a schematic of a hardware controller based on given logic and fundamentals from the lecture notes.
+
+Pray
 
 ### USB
 
