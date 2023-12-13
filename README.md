@@ -25,6 +25,8 @@ int main() {
     return 0;
 }
 ```
+### Increment/Decrement
+
 
 ### Macros
 Processed BEFORE the actual compilation of the code, enabling code reusability, conditional compilation, and platform-specific adaptations. They do not need to be in capital letters, but it is standard formatting to do so.
@@ -312,7 +314,39 @@ inputFile.read(reinterpret_cast<char*>(&myData), sizeof(MyStruct));
 
 ### Writing From Files 
 
+```cpp
+#include <iostream>
+#include <fstream>
+
+int main() {
+    // Open a file for writing
+    std::ofstream outputFile("example_output.txt");
+
+    // Check if the file is successfully opened
+    if (!outputFile.is_open()) {
+        std::cerr << "Unable to open the file for writing." << std::endl;
+        return 1; // Return an error code
+    }
+
+    // Write data to the file
+    outputFile << "Hello, World!" << std::endl;
+    outputFile << "This is a new line.";
+
+    // Close the file
+    outputFile.close();
+
+    std::cout << "Data has been written to the file." << std::endl;
+
+    return 0;
+}
+
+
+``` 
+
 ### File Security 
+
+
+
 
 #### File Permission Constants: 
 
@@ -328,6 +362,7 @@ inputFile.read(reinterpret_cast<char*>(&myData), sizeof(MyStruct));
 
 
 ### Streams 
+![](http://csi2372.rambolps.ca:3000/uploads/c8c7afe9-f1e8-4449-b97e-697f80ed7f0d.png)
 
 ### Cursor Manipulation 
 
@@ -338,6 +373,34 @@ inputFile.seekg(10, std::ios::beg);
 // Move 10 characters from the beginning of the file
 
 ```
+
+End Of File
+
+```cpp
+while (!inputFile.eof()) {
+    // Read from the file
+}
+```
+
+Ignoring Characters 
+```cpp
+inputFile.ignore(100, '\n'); // Ignore up to 100 characters or until a newline
+
+```
+
+tellg
+```cpp
+    std::streampos currentPosition = inputFile.tellg();  // Get the current position of the get pointer
+
+```
+
+tellp
+```cpp
+    // Get and print the current position of the put pointer
+    std::streampos currentPosition = outputFile.tellp();
+```
+
+
 
 
 ## Question 8.1-8.3 + 8.4 bonus (6 points each + 6 point bonus)
@@ -932,6 +995,8 @@ int main() {
 draw a schematic of a hardware controller based on given logic and fundamentals from the lecture notes.
 
 Pray
+
+Moradi Moment 
 
 ### USB
 
