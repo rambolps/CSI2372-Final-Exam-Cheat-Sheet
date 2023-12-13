@@ -3,6 +3,13 @@
 ## Question 1-5 (4 points each)
 The first five questions will be True/False, Multiple Choice, and/or Multiple Selection
 
+**Pointer**: Variable that stores memory address as its value. 
+Declaration: `int *ptr`
+**Address-of Operator** (`&`): Obtains the memory address of a variable. 
+Declaration: `&variable`
+**Dereference Operator** (`*`): Accesses the value stored at a pointer's address. 
+Declaration: `*ptr`
+
 ### Ternary Operator
 I don't think he explicitly taught this, but many people might not have been aware of the ternary operator.
 
@@ -26,7 +33,25 @@ int main() {
 }
 ```
 ### Increment/Decrement
+The ++ and - - operators can be useful for incrementing and decrementing integers and array memory locations.
+```cpp
+int x = 0;
 
+x++; // x is now 1
+++x; // x is now 2
+x--; // x is now 1
+--x; // x is now 0
+```
+Both of these formatting types work for their purpose, however when used in a function, it is very important to know which one may be needed.
+
+For example, when this function is done:
+```cpp
+int x = 1;
+int y = 2;
+
+std::cout << x++ + ++y;
+```
+The output of this would be 4. The code takes x and uses it in the addition **before** incrementing it. x is now 2, but was used as 1 in the operation. y had the ++ preceding it, so it was increased to 3 before being used in the operation, so the operation was 1 + 3. The same works for the - - operator.
 
 ### Macros
 Processed BEFORE the actual compilation of the code, enabling code reusability, conditional compilation, and platform-specific adaptations. They do not need to be in capital letters, but it is standard formatting to do so.
@@ -47,7 +72,7 @@ std::cout << GREETING; //prints "Hello, World!"
 ##### Function-Like Macros
 Preprocessor macros can also define functions. The formatting is as shown below.
 ```cpp
-#define MACRO_NAME(parameter1, parameter2, ...) (replacement)
+#define MACRO_NAME(parameter1, parameter2, ...) (operation)
 ```
 Used in an example:
 ```cpp
@@ -62,7 +87,7 @@ int main(){
     
 }
 ```
-#### #undef #ifdef #else #endif 
+#### #undef #ifdef #elif #else #endif 
 Checks if a macro is defined. Works like an if condition on a boolean case on if it is defined or not.
 ```cpp
 #include <iostream>
@@ -362,6 +387,9 @@ int main() {
 
 
 ### Streams 
+
+![](http://csi2372.rambolps.ca:3000/uploads/0a060643-36be-4156-974e-28bdfdece77f.png)
+
 ![](http://csi2372.rambolps.ca:3000/uploads/c8c7afe9-f1e8-4449-b97e-697f80ed7f0d.png)
 
 ### Cursor Manipulation 
@@ -1019,4 +1047,5 @@ Moradi Moment
 ### UART 
 
 ![](http://csi2372.rambolps.ca:3000/uploads/4395ef0f-cba2-48fa-9a90-60605478871b.png)
+
 
