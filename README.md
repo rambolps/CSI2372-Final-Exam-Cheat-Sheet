@@ -126,6 +126,8 @@ int main() {
 
 #### Smart Pointers
 
+
+
 ##### Unique Pointer
 Type of smart pointer in C++ that represents exclusive ownership of a dynamically allocated object. Unlike shared pointers, only one unique pointer can own the object, and when the unique pointer goes out of scope, the associated memory is automatically deallocated.
 
@@ -188,10 +190,70 @@ int main() {
 ```
 
 
-#### Memory Deallocation 
+#### Memory Deallocation
+
+```cpp
+// Dynamic array deallocation
+int* dynamicArray = new int[5];
+delete[] dynamicArray;
+```
+
+
 #### Memory Pool 
 
+Memory pools are a form of memory management where a large block of memory is allocated, and then smaller blocks are assigned from within that block as needed. 
 
+```cpp
+
+// MemoryPool class definition
+class MemoryPool {
+private:
+    char* block;        // Pointer to the allocated memory block
+    std::size_t nextIndex;  // Index to track the next available position in the block
+
+public:
+    // Constructor: Allocates memory block of given size
+    MemoryPool(std::size_t block_size) : nextIndex(0) {
+        block = new char[block_size];
+    }
+
+    // Destructor: Frees the allocated memory block
+    ~MemoryPool() {
+        delete[] block;
+    }
+
+    // Allocate function: Returns a pointer to the next available position in the block
+    void* allocate(std::size_t size) {
+        void* ptr = block + nextIndex;  // Calculate the pointer to the next position
+        nextIndex += size;              // Move the nextIndex to the next available position
+        return ptr;
+    }
+
+    // DeallocateAll function: Resets the nextIndex to deallocate all memory
+    void deallocateAll() {
+        nextIndex = 0;
+    }
+};
+
+int main() {
+    // Create a MemoryPool with a block size of 64 bytes
+    MemoryPool memoryPool(64);
+    
+    // Allocate memory for an integer and set its value
+    int* intPtr = static_cast<int*>(memoryPool.allocate(sizeof(int)));
+    *intPtr = 42;
+
+    // Allocate memory for a character and set its value
+    char* charPtr = static_cast<char*>(memoryPool.allocate(sizeof(char)));
+    *charPtr = 'A';
+
+    // Deallocate all memory obtained from the pool
+    memoryPool.deallocateAll();
+
+    return 0;
+}
+
+```
 
 ## Question 7 (12 points)
 evaluates your ability to provide access to reading and writing files with some specifications. 
@@ -199,48 +261,55 @@ evaluates your ability to provide access to reading and writing files with some 
 ### Reading From Files 
 Write a program in C++ that reads data from a file called "input.txt" and writes it to another file called "output.txt". Use stream input/output to read and write the data, and handle any errors that may occur during the process.
 
-
 ```cpp
+#include <iostream>
 #include <fstream>
-#include<iostream>
 #include <string>
+
 int main() {
-std :: ofstream inputFile("input.txt");
-if (!inputFile) {
-std :: cerr << "Error: Unable to create/open input file 'input.txt' " << std :: endl;
-return 1;
+    // Open a file for reading
+    std::ifstream inputFile("example.txt");
+
+    // Check if the file is successfully opened
+    if (!inputFile.is_open()) {
+        std::cerr << "Unable to open the file." << std::endl;
+        return 1; // Return an error code
+    }
+
+    // Read content from the file line by line
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        std::cout << line << std::endl; // Display each line
+    }
+
+    // Close the file
+    inputFile.close();
+
+    return 0;
 }
-// Write data to the input.txt file
-inputFile << "This is the first line of input." << std :: endl;
-inputFile << "This is the second line of input." << std::endl;
-// Close the input.txt file
-inputFile.close();
-// Open the input.txt file for reading
-std :: ifstream outputFile("input.txt");
-if (!outputFile) {
-std :: cerr << "Error: Unable to open input file 'input.txt' for reading" << std :: endl;
-return 1;
-}
-// Create the output.txt file and open it for writing
-std :: ofstream output("output.txt");
-if (!output) {
-std :: cerr << "Error: Unable to create/open output file 'output.txt'" << std :: endl;
-outputFile.close(); // Close the input file before exiting
-return 1;
-}
-// Read data from input.txt and write it to output.txt
-std :: string line;
-while (std :: getline(outputFile, line)) {
-output << line << std :: endl;
-}
-// Close both files
-outputFile.close();
-output.close();
-std :: cout << "Data copied successfully from 'input. txt' to 'output.txt'" << std::endl;
-return 0;
-}![](http://csi2372.rambolps.ca:3000/uploads/2d64a8ea-d9f8-430b-bf91-26f2851193cb.png)
+```
+
+Input Mode
+```cpp
+
+std::ifstream inputFile("example.txt", std::ios::in);
 
 ```
+
+Binary Mode
+```cpp
+
+struct MyStruct {
+    int data;
+    char name[20];
+};
+
+MyStruct myData;
+inputFile.read(reinterpret_cast<char*>(&myData), sizeof(MyStruct));
+
+```
+
+
 ### Writing From Files 
 
 ### File Security 
@@ -261,6 +330,14 @@ return 0;
 ### Streams 
 
 ### Cursor Manipulation 
+
+seekg
+```cpp
+
+inputFile.seekg(10, std::ios::beg); 
+// Move 10 characters from the beginning of the file
+
+```
 
 
 ## Question 8.1-8.3 + 8.4 bonus (6 points each + 6 point bonus)
@@ -344,50 +421,61 @@ Traversal Steps:
 
 #### Deletion 
 
-```cpp 
+```cpp
+#include <iostream>
 
-/* Function to delete the entire linked list */ 
-void deleteList (Node** head_ref)
-{
-    /* deref head ref to get the real head */ 
-    Node* current "head_ref;
-    Node next= NULL;
-    while (current != NULL)
-    {
-        next current->next;
-        free(current);
-        current next;
-    }
-    /* deref head ref to affect the real head back
-    in the caller. */
-    "head_ref= NULL;
+// Define a Node structure
+struct Node {
+    int data;
+    Node* next;
     
+    // Constructor to initialize data and next pointer
+    Node(int value) : data(value), next(nullptr) {}
+};
+
+// Function to delete the entire linked list
+void deleteList(Node** head_ref) {
+    Node* current = *head_ref;
+    Node* next;
+
+    while (current != nullptr) {
+        next = current->next;
+        delete current;
+        current = next;
+    }
+
+    *head_ref = nullptr; // Set the head to null in the caller
 }
 
-void push (Node** head_ref, int new_data) {
-    /* allocate node */
-    Node* new_node - new Node();
-    /* put in the data */
-    new_node->data= new_data;
-    /* link the old list of the new node */ 
-    new_node->next (*head_ref);
-    /*move the head to point to the new node */ 
-    (*head_ref) new_node;
+// Function to insert a new node at the beginning of the list
+void push(Node** head_ref, int new_data) {
+    // Allocate a new node
+    Node* new_node = new Node(new_data);
+    
+    // Link the old list to the new node
+    new_node->next = *head_ref;
+
+    // Move the head to point to the new node
+    *head_ref = new_node;
 }
 
+// Driver code
+int main() {
+    // Start with an empty list
+    Node* head = nullptr;
 
-/ Driver code*/
-int main()
-{
-    /* Start with the empty list */ 
-    Node head= NULL;
-    /* Use push() to construct below list 1-12-1-4->1 */
+    // Use push() to construct the list: 1 -> 12 -> 1 -> 4 -> 1
     push(&head, 1);
     push(&head, 4);
     push(&head, 1);
-    push(&head, 12); push(&head, 1);
-    cout << "Deleting linked list"; deleteList(&head);
-    cout << "\nLinked list deleted";
+    push(&head, 12);
+    push(&head, 1);
+
+    std::cout << "Deleting linked list\n";
+    deleteList(&head);
+    std::cout << "Linked list deleted\n";
+
+    return 0;
 }
 ```
 
@@ -622,9 +710,112 @@ covers the logic of a JK flip-flop in two segments: the first involves implement
 ![](http://csi2372.rambolps.ca:3000/uploads/317fda94-3cba-47cf-b560-fbf517835c52.png)
 
 #### Code 
-![](http://csi2372.rambolps.ca:3000/uploads/ed622ece-43c5-4753-bf38-78306f7d81de.png)
+
+```cpp
+#include <iostream>
+
+class JkFlipFlop {
+private: bool Q; bool notQ;
+public:
+    JkFlipFlop() : Q(false), notQ(true) {}
+    void operate(bool J, bool K) {
+        if (J && K) {
+            Q = !Q;
+            notQ = !notQ;
+        } else if (J) {
+            Q = true;
+            notQ = false;
+        } else if (K) {
+            Q = false;
+            notQ = false;
+        }
+
+    }
+    bool getState() const {
+        return Q;
+    }
+};
+
+int main() {
+
+    const int numFlipFlops = 8;
+    JkFlipFlop flipFlops[numFlipFlops];
+    bool data[numFlipFlops];
+    for (int i = 0; i < numFlipFlops; ++i) {
+        data[i] = false;
+    }
+    auto updateFlipFlop = [&](int input) {
+        for (int i = 0; i < numFlipFlops; ++i) {
+            bool J = (input >> i) & 1;
+            bool K = true;
+            flipFlops[i].operate(J, K);
+            data[i] = flipFlops[i].getState();
+        }
+    };
+    for (int count = 0; count < 256; ++count) {
+        updateFlipFlop(count);
+        std::cout << "Count: ";
+        for (int i = numFlipFlops - 1; i >= 0; --i) {
+            std::cout << data[i];}
+        std::cout << std::endl;
+    }
+    
+    return 0;
+}
+```
 
 ![](http://csi2372.rambolps.ca:3000/uploads/db45868d-39f3-4a1d-9794-6299b8bc0eab.png)
+
+```cpp
+#include <iostream>
+#include <fstream>
+#include <chrono>
+#include <thread>
+
+using namespace std;
+
+int main(){
+    // Open text files for writing
+    ofstream clockFile("clock.txt");
+    ofstream dataFile("random_data.txt");
+
+    // Run the oce for 10 seconds
+    auto startTime = chrono::high_resolution_clock::now();
+    while(chrono::duration_cast<chrono::seconds>(chrono::high_resolution_clock::now() - startTime).count() < 10) {
+
+        //Generate clock pulses
+        for (int i = 0; i < 8; ++i) {
+            // Assuming clock is represented by '1' during the pulse
+            clockFile << "1";
+
+            // Add a newline for better readability in the text file
+            clockFile << endl;
+        }
+
+        for (int i = 0; i < 2; ++i) {
+            // Assuming clock is represented by '0' during the off period
+            clockFile << "0";
+
+            // Add a newline for better readability in the text file
+            clockFile << endl;
+        }
+
+        //Generate random binary data for each clock pulse
+        for(int i = 0; i < 10; ++i){
+            int randomBit = rand() % 2;
+            dataFile << randomBit;
+
+            //Add a newline for better readability in the text file
+            dataFile << endl;
+        }
+    }
+
+    clockFile.close(); // close the files
+    dataFile.close();
+    cout << "Data generation and storage complete." << endl;
+    return 0;
+}
+```
 
 ![](http://csi2372.rambolps.ca:3000/uploads/a70df603-ff69-4e5c-9517-0ba63e1549de.png)
 
@@ -763,5 +954,4 @@ Pray
 ### UART 
 
 ![](http://csi2372.rambolps.ca:3000/uploads/4395ef0f-cba2-48fa-9a90-60605478871b.png)
-
 
